@@ -199,14 +199,13 @@
         </executions>
       </plugin>
       <plugin>
-        <groupId>org.sonatype.plugins</groupId>
-        <artifactId>nexus-staging-maven-plugin</artifactId>
-        <version>1.6.7</version>
+        <groupId>org.sonatype.central</groupId>
+        <artifactId>central-publishing-maven-plugin</artifactId>
+        <version>0.7.0</version>
         <extensions>true</extensions>
         <configuration>
-          <serverId>aws-swf</serverId>
-          <nexusUrl>https://aws.oss.sonatype.org/</nexusUrl>
-          <autoReleaseAfterClose>false</autoReleaseAfterClose>
+          <publishingServerId>central</publishingServerId>
+          <autoPublish>false</autoPublish>
         </configuration>
       </plugin>
     </plugins>
@@ -214,13 +213,46 @@
 
   <distributionManagement>
     <snapshotRepository>
-      <id>aws-swf</id>
-      <url>https://aws.oss.sonatype.org/content/repositories/snapshots</url>
+      <id>central</id>
+      <url>https://ossrh-staging-api.central.sonatype.com/content/repositories/snapshots</url>
     </snapshotRepository>
     <repository>
-      <id>aws-swf</id>
-      <url>https://aws.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+      <id>central</id>
+      <url>https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/</url>
     </repository>
-
   </distributionManagement>
+
+  <profiles>
+    <profile>
+      <id>publishing</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>1.5</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.sonatype.central</groupId>
+            <artifactId>central-publishing-maven-plugin</artifactId>
+            <version>0.7.0</version>
+            <extensions>true</extensions>
+            <configuration>
+              <publishingServerId>central</publishingServerId>
+              <autoPublish>false</autoPublish>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
